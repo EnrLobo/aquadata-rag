@@ -1,5 +1,5 @@
 import os
-import pandas as pd
+import csv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
@@ -14,58 +14,60 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 chave_api = os.getenv("GEMINI_API_KEY") or os.getenv("API_KEY")
 
 # ==========================================
-# CARREGAMENTO DA BASE DE DADOS FORMATADA
+# CARREGAMENTO DA BASE DE DADOS (CSV NATIVO)
 # ==========================================
 nome_arquivo_csv = 'Recordes_Formatados_RAG.xlsx - Recordes_Formatados_RAG.csv.csv'
-nome_arquivo_xlsx = 'Recordes_Formatados_RAG.xlsx'
-df = None
+dataset_recordes = []
 
 try:
     if os.path.exists(nome_arquivo_csv):
-        df = pd.read_csv(nome_arquivo_csv, encoding='utf-8')
-        print("Planilha formatada (.csv) carregada com sucesso!")
-    elif os.path.exists(nome_arquivo_xlsx):
-        df = pd.read_excel(nome_arquivo_xlsx)
-        print("Planilha formatada (.xlsx) carregada com sucesso!")
+        with open(nome_arquivo_csv, mode='r', encoding='utf-8') as arquivo:
+            # Lê o CSV tratando a primeira linha como cabeçalho
+            leitor = csv.DictReader(arquivo)
+            for linha in leitor:
+                dataset_recordes.append(linha)
+        print(f"Dataset carregado com sucesso! {len(dataset_recordes)} registros encontrados.")
+    else:
+        print("Aviso: Arquivo CSV formatado não encontrado na pasta.")
 except Exception as e:
-    print(f"Aviso ao carregar planilha: {str(e)}")
+    print(f"Erro ao carregar a base de dados via CSV: {str(e)}")
 
 # ==========================================
-# RETRIEVAL (BUSCA DE CONTEXTO OTIMIZADA)
+# RETRIEVAL (BUSCA DE CONTEXTO SEM PANDAS)
 # ==========================================
 def buscar_contexto_rag(pergunta):
-    global df
-    if df is None or df.empty:
-        return "Nenhum dado disponível na planilha."
+    global dataset_recordes
+    if not dataset_recordes:
+        return "Nenhum dado disponível no momento."
         
     pergunta_limpa = pergunta.lower()
     palavras_chave = pergunta_limpa.split()
     
-    # Filtra palavras irrelevantes para focar no estilo/distância
-    ignorar = ["o", "a", "os", "as", "do", "da", "dos", "das", "de", "quem", "é", "recorde", "mundial", "feminino", "masculino"]
+    # Filtra palavras comuns para focar nos termos de busca importantes
+    ignorar = ["o", "a", "os", "as", "do", "da", "dos", "das", "de", "quem", "é", "recorde", "mundial", "feminino", "masculino", "qual"]
     filtradas = [p for p in palavras_chave if p not in ignorar and len(p) > 1]
     
     contextos_encontrados = []
     
-    for index, row in df.iterrows():
-        conteudo_linha = str(row['Conteúdo']).lower()
-        # Se as palavras chaves (ex: "50m", "livre") baterem com a linha do conteúdo, captura ela
-        if filtradas and all(palavra in conteudo_linha for palabra in filtradas):
-            contextos_encontrados.append(str(row['Conteúdo']))
+    # Busca estrita: todas as palavras filtradas devem estar na linha
+    for linha in dataset_recordes:
+        conteudo_linha = str(linha.get('Conteúdo', '')).lower()
+        if filtradas and all(palavra in conteudo_linha for palavra in filtradas):
+            contextos_encontrados.append(str(linha.get('Conteúdo', '')))
             
     if contextos_encontrados:
         return "\n".join(contextos_encontrados[:3])
         
-    # Busca por aproximação secundária caso a estrita falhe
-    for index, row in df.iterrows():
-        conteudo_linha = str(row['Conteúdo']).lower()
+    # Busca por aproximação secundária
+    for linha in dataset_recordes:
+        conteudo_linha = str(linha.get('Conteúdo', '')).lower()
         if any(palavra in conteudo_linha for palavra in palavras_chave if len(palavra) > 3):
-            contextos_encontrados.append(str(row['Conteúdo']))
+            contextos_encontrados.append(str(linha.get('Conteúdo', '')))
             
     if contextos_encontrados:
         return "\n".join(contextos_encontrados[:3])
         
-    return "Nenhum registro correspondente exato na planilha."
+    return "Nenhum registro correspondente exato encontrado na planilha de recordes."
 
 # ==========================================
 # ROTA DO CHAT
@@ -78,7 +80,7 @@ def chat():
     if not pergunta_usuario:
         return jsonify({"erro": "A mensagem não pode estar vazia"}), 400
         
-    # Recupera o contexto estruturado da planilha formatada
+    # Recupera o contexto do nosso buscador leve
     contexto_tcc = buscar_contexto_rag(pergunta_usuario)
     
     prompt_sistema = f"""
@@ -87,7 +89,7 @@ def chat():
     Instruções de resposta:
     1. Use o contexto fornecido abaixo para responder de forma clara, direta e humanizada à pergunta do usuário.
     2. Sempre que perguntarem de um recorde, traga obrigatoriamente: o Tempo, Quando foi feito (Data), Onde/Qual Competição, quem é o Atleta e o País dele.
-    3. Se a resposta exata não puder ser encontrada no contexto, use o seu conhecimento geral sobre natação para responder perfeitamente, mas cite os dados do contexto se houver aproximação.
+    3. Se a resposta exata não puder ser encontrada no contexto, use o seu conhecimento geral sobre natação para responder perfeitamente.
 
     CONTEXTO RECUPERADO DO DATASET:
     {contexto_tcc}
