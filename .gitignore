@@ -1,0 +1,16 @@
+# ====== BACKEND IGNORADOS ======
+aquadata-backend/venv/
+aquadata-backend/.env
+aquadata-backend/__pycache__/
+aquadata-backend/*.pyc
+
+# ====== FRONTEND IGNORADOS ======
+aquadata-frontend/node_modules/
+aquadata-frontend/dist/
+aquadata-frontend/.env.local
+aquadata-frontend/.env.development.local
+aquadata-frontend/.env.production.local
+
+# ====== SISTEMA ======
+.DS_Store
+Thumbs.db

@@ -1,0 +1,259 @@
+:root {
+  --color-ocean-dark: #0a1118;       /* Fundo principal profundo */
+  --color-pool-blue: #102030;        /* Fundo do chat */
+  --color-swim-cyan: #00ffff;        /* Ciano/Neon para detalhes e água */
+  --color-bubble-bot: #1b2a38;       /* Azul acinzentado para o bot */
+  --color-bubble-user: #005c8a;      /* Azul piscina profundo para o usuário */
+  --color-text: #e2f1f8;
+  --color-text-muted: #8ea8be;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-ocean-dark);
+  color: var(--color-text);
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: var(--color-pool-blue);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.05);
+}
+
+/* Header */
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #070d14;
+  border-bottom: 2px solid var(--color-swim-cyan);
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-swimming {
+  background-color: #162c3d;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.sub-institucional {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: var(--color-swim-cyan);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.btn-clear {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #162c3d;
+  border: 1px solid #25445c;
+  color: var(--color-text);
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.btn-clear:hover {
+  background-color: var(--color-bubble-user);
+  border-color: var(--color-swim-cyan);
+}
+
+/* Histórico de Mensagens */
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.message-row {
+  display: flex;
+  gap: 12px;
+  max-width: 80%;
+}
+
+.message-row.bot {
+  align-self: flex-start;
+}
+
+.message-row.user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e354a;
+  color: var(--color-swim-cyan);
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.message-row.user .avatar {
+  background-color: var(--color-bubble-user);
+  color: #ffffff;
+}
+
+.message-bubble {
+  padding: 12px 16px;
+  border-radius: 14px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.message-row.bot .message-bubble {
+  background-color: var(--color-bubble-bot);
+  border-top-left-radius: 2px;
+  border: 1px solid #243b4f;
+}
+
+.message-row.user .message-bubble {
+  background-color: var(--color-bubble-user);
+  border-top-right-radius: 2px;
+}
+
+.message-bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Loading Animado */
+.loading-bubble {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 15px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-swim-cyan);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+/* Footer / Input */
+.chat-footer {
+  padding: 15px 20px;
+  background-color: #070d14;
+  border-top: 1px solid #162c3d;
+}
+
+.input-container {
+  display: flex;
+  background-color: #111e2b;
+  border: 1px solid #243b4f;
+  border-radius: 8px;
+  padding: 6px 12px;
+  align-items: center;
+}
+
+.input-container:focus-within {
+  border-color: var(--color-swim-cyan);
+  box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+}
+
+.input-container input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  padding: 10px 0;
+  font-size: 1rem;
+  outline: none;
+}
+
+.input-container input::placeholder {
+  color: #526f8a;
+}
+
+.input-container button {
+  background: var(--color-bubble-user);
+  border: 1px solid var(--color-swim-cyan);
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.input-container button:hover:not(:disabled) {
+  background: var(--color-swim-cyan);
+  color: #000;
+}
+
+.input-container button:disabled {
+  background: #182531;
+  border-color: #243b4f;
+  color: #435b70;
+  cursor: not-allowed;
+}
+
+/* Rodapé de Créditos */
+.footer-credits {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.footer-credits strong {
+  color: #ffffff;
+}
+
+.tcc-tag {
+  font-size: 0.72rem;
+  color: var(--color-swim-cyan);
+  margin-top: 2px;
+  opacity: 0.8;
+}
