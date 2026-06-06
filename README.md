@@ -65,3 +65,33 @@ A estrutura foi desenhada sob o conceito de **Monorepo**, dividindo-se em duas a
 2. Ative seu ambiente virtual: `venv\\Scripts\\activate` (Windows) ou `source venv/bin/activate` (Linux/Mac)
 3. Instale as dependências limpas: `pip install -r requirements.txt`
 4. Crie um arquivo `.env` na raiz da pasta e adicione sua chave:
+env
+   GEMINI_API_KEY=AIzaSy...
+
+    Execute o servidor: python app.py (rodará em http://localhost:5000)
+
+Frontend (React + Vite)
+
+    Navegue até a pasta: cd aquadata-frontend
+
+    Instale os pacotes do Node: npm install
+
+    Inicie o servidor de desenvolvimento: npm run dev
+
+🎓 Requisitos do Trabalho Prático Satisfeitos
+
+    [x] Dataset Customizado: Mais de 70 linhas de dados reais sobre natação.
+
+    [x] Temática de Interesse: Alinhado 100% ao TCC da dupla.
+
+    [x] Embeddings do Google: Gerados com modelos oficiais do AI Studio.
+
+    [x] Interface React Modificada: Cores, ícones e estilos adaptados ao tema.
+
+    [x] Desafio Aceito: Implementação e estudo de embeddings com ChromaDB.
+
+    [x] Hospedagem Completa: Frontend na Vercel e Backend no Render conversando em tempo real.
+
+    [x] Código no GitHub: Repositório organizado em Monorepo limpo.
+
+Desenvolvido com 💙 por Enrique e João Henrique — 2026.
